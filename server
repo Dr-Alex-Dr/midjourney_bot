@@ -1,0 +1,63 @@
+const express = require('express');
+var axios = require('axios');
+require('dotenv').config();
+const { Telegraf } = require('telegraf');
+const { message } = require('telegraf/filters');
+// const { GetFourImages } = require('./controllers/GetFourImages');
+// const { GetLinkImage } = require('./controllers/GetLinkImage');
+const { GoogleSheets } = require('./controllers/GoogleSheets');
+const { DownloadImage } = require('./controllers/DownloadImage');
+const { GoogleTranslater } = require('./controllers/GoogleTranslater');
+const app = express();
+
+app.use(express.json());
+
+const bot = new Telegraf(process.env.BOT_TOKEN);
+
+let requests = [];
+async function splitText(text) {
+    text = text.split('\n');
+    for (let item of text) {
+        item = await GoogleTranslater(item);
+        requests.push(item);
+    }
+}
+
+bot.on(message('text'), async (ctx) => {
+    await splitText(ctx.message.text);
+});
+
+let timer = setInterval(() => {
+  if (requests.length !== 0) {
+    // GetFourImages(requests[0])
+    console.log(requests[0]);
+    requests.splice(0, 1);
+  }  
+}, 8000);
+
+
+
+app.post('/webhook', (req, res) => {
+  GetLinkImage('U1', req.body.buttonMessageId);
+  GetLinkImage('U2', req.body.buttonMessageId);
+  GetLinkImage('U3', req.body.buttonMessageId);
+  GetLinkImage('U4', req.body.buttonMessageId);
+});
+
+app.post('/getImg', (req, res) => {
+  DownloadImage(req.body.imageUrl, req.body.content, `${req.body.content} ${Math.floor(Math.random() * (99999 - 1 + 1)) + 1}`)
+  .then(() => {
+    console.log('Изображение успешно загружено и сохранено.');
+    console.log(requests);
+  })
+  .catch((error) => {
+    console.error('Произошла ошибка:', error);
+  });
+
+});
+
+app.listen(8080, () => {
+  console.log('Сервер запущен на порту 8080');
+});
+bot.launch();
+//admin-533@midjourney-bot-388312.iam.gserviceaccount.com
