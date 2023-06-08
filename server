@@ -3,11 +3,8 @@ var axios = require('axios');
 require('dotenv').config();
 const { Telegraf } = require('telegraf');
 const { message } = require('telegraf/filters');
-// const { GetFourImages } = require('./controllers/GetFourImages');
-// const { GetLinkImage } = require('./controllers/GetLinkImage');
-const { GoogleSheets } = require('./controllers/GoogleSheets');
-const { DownloadImage } = require('./controllers/DownloadImage');
 const { GoogleTranslater } = require('./controllers/GoogleTranslater');
+const { GetImages } = require('./controllers/GetImages');
 const app = express();
 
 app.use(express.json());
@@ -29,32 +26,10 @@ bot.on(message('text'), async (ctx) => {
 
 let timer = setInterval(() => {
   if (requests.length !== 0) {
-    // GetFourImages(requests[0])
-    console.log(requests[0]);
+    GetImages(requests[0])
     requests.splice(0, 1);
   }  
 }, 8000);
-
-
-
-app.post('/webhook', (req, res) => {
-  GetLinkImage('U1', req.body.buttonMessageId);
-  GetLinkImage('U2', req.body.buttonMessageId);
-  GetLinkImage('U3', req.body.buttonMessageId);
-  GetLinkImage('U4', req.body.buttonMessageId);
-});
-
-app.post('/getImg', (req, res) => {
-  DownloadImage(req.body.imageUrl, req.body.content, `${req.body.content} ${Math.floor(Math.random() * (99999 - 1 + 1)) + 1}`)
-  .then(() => {
-    console.log('Изображение успешно загружено и сохранено.');
-    console.log(requests);
-  })
-  .catch((error) => {
-    console.error('Произошла ошибка:', error);
-  });
-
-});
 
 app.listen(8080, () => {
   console.log('Сервер запущен на порту 8080');

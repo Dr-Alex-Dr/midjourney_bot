@@ -1,41 +1,14 @@
-const { Midjourney } = require('midjourney');
+import Midjourney from "https://deno.land/x/midjourney_discord_api/mod.ts";
 
-async function main() {
-  const client = new Midjourney({
-    ChannelId: '1042502447282782238',
-    SalaiToken: 'NzA5ODA4ODIyODUxNjAwNDY3.GWCkb8.x2tO9ILRibzqguUl2z6OGoazSxaAskX4BAxHhY',
-    Debug: true,
-    Ws:true,
-  });
+const client = new Midjourney("interaction.txt");
+await client.connectWs();
+ // Used Websocket to boost detection. (experiental)
+console.log("test")
+client.imagine(
+  "на русском", 
+  (percent) => {console.log(percent)}
+  /* add optional progress function (percent) => void */
+).then(res => {
+  console.log(res);
+})
 
-  await client.init();
-  const msg = await client.Imagine("a cool cat, blue ears, yellow hat");
-  console.log({ msg });
-  if (!msg) {
-    console.log("no message");
-    return;
-  }
-  const msg2 = await client.Upscale(
-    msg.content,
-    2,
-    msg.id,
-    msg.hash,
-    (uri, progress) => {
-      console.log("loading", uri, "progress", progress);
-    }
-  );
-  const msg3 = await client.Upscale(
-    msg.content,
-    3,
-    msg.id,
-    msg.hash,
-    (uri, progress) => {
-      console.log("loading", uri, "progress", progress);
-    }
-  );
-  console.log({ msg3 });
-}
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});

@@ -1,0 +1,19 @@
+{
+  msg: {
+    id: '1115893552786968577',
+    uri: 'https://cdn.discordapp.com/attachments/1042502447282782238/1115893552447225907/Adam_Aushev_blue_sun_in_shorts_349f0a0e-741f-4ed9-882b-e9486feb66a4.png',
+    hash: '349f0a0e-741f-4ed9-882b-e9486feb66a4',
+    content: 'blue sun in shorts --seed 2288 --v 4 --s 50',
+    progress: 'done'
+  }
+}
+
+{
+  msg2: {
+    id: '1115893701831557120',
+    uri: 'https://cdn.discordapp.com/attachments/1042502447282782238/1115893701626056744/Adam_Aushev_blue_sun_in_shorts_81002f43-f6c0-4a19-99d1-f757a8a01ec0.png',
+    hash: '81002f43-f6c0-4a19-99d1-f757a8a01ec0',
+    content: 'blue sun in shorts --seed 2288 --v 4 --s 50',
+    progress: 'done'
+  }
+}

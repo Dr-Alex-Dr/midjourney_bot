@@ -1,16 +1,12 @@
-const { Midjourney } = require('midjourney');
+import Midjourney from "midjourney-discord-api";
 
-const client = new Midjourney({
-    ChannelId: '1042502447282782238',
-    SalaiToken: 'NzA5ODA4ODIyODUxNjAwNDY3.GWCkb8.x2tO9ILRibzqguUl2z6OGoazSxaAskX4BAxHhY',
-    Debug: true,
-    Ws:true,
-});
-
-async function getImg() {
-    const msg = await client.Imagine("futuristic house in the form of a white trailer", (uri) => { });
-    console.log("=================== ", typeof msg, mgs)
-}
-
-getImg();
-
+const client = new Midjourney("interaction.txt");
+const msg = await client.imagine(
+  "horse", 
+  /* add optional progress function (percent) => void */
+);
+const msg1 = await client.imagine(
+  "wolf", 
+  /* add optional progress function (percent) => void */
+);
+console.log("you find your result here: ", msg.attachments[0].url);

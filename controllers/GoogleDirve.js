@@ -6,7 +6,8 @@ const auth = new google.auth.GoogleAuth({
   scopes: ['https://www.googleapis.com/auth/drive'],
 });
 
-const main = async (nameFolder) => {
+async function GoogleDirve(nameFolder)
+{
   const client = await auth.getClient();
   const drive = google.drive({ version: 'v3', auth: client });
 
@@ -113,4 +114,4 @@ const getPublicViewLinks = async (fileIds, drive, folderName) => {
 };
 
 
-main('fantastic spaceship crashed over the city --v 4 --s 50');
+module.exports = { GoogleDirve }
