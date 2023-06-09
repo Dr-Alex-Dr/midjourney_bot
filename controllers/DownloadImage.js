@@ -25,7 +25,10 @@ async function DownloadImage(imageUrl, folderName, nameImg) {
       }
       if (files.length !== undefined) {
         const fileCount = files.length;
-        console.log(`Папка содержит ${fileCount} файла.`);     
+        console.log(`Папка содержит ${fileCount} файла.`);
+        if (fileCount == 3) {
+          GoogleDirve(folderPath, folderName);
+        }     
       }
     });
 

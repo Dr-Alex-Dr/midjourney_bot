@@ -1,14 +1,17 @@
-import Midjourney from "https://deno.land/x/midjourney_discord_api/mod.ts";
+function cleanupText(input) {
+  // Удаление символов +=[]:*?;«,./\<>|
+  const cleanedText = input.replace(/[+=\[\]:*?;«,\.\/\\<>\|]/g, '');
 
-const client = new Midjourney("interaction.txt");
-await client.connectWs();
- // Used Websocket to boost detection. (experiental)
-console.log("test")
-client.imagine(
-  "на русском", 
-  (percent) => {console.log(percent)}
-  /* add optional progress function (percent) => void */
-).then(res => {
-  console.log(res);
-})
+  // Удаление текста после символа --
+  const textBeforeDash = cleanedText.split('--')[0];
 
+  // Удаление лишних пробелов
+  const trimmedText = textBeforeDash.trim().replace(/\s+/g, ' ');
+
+  return trimmedText;
+}
+
+// Пример использования
+const inputText = 'Это :строка +=[], которую нужно: "очистить" -- и удалить лишние  пробелы.';
+const cleanedText = cleanupText(inputText);
+console.log(cleanupText('Это :строка +=[], которую нужно: "очистить" -- и удалить лишние  пробелы.'));

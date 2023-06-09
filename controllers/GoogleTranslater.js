@@ -24,4 +24,5 @@ async function GoogleTranslater(text) {
   }
 };
 
-module.exports = { GoogleTranslater }
+GoogleTranslater('корова')
+// module.exports = { GoogleTranslater }

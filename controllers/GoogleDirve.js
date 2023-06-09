@@ -6,22 +6,21 @@ const auth = new google.auth.GoogleAuth({
   scopes: ['https://www.googleapis.com/auth/drive'],
 });
 
-async function GoogleDirve(nameFolder)
+async function GoogleDirve(folderPath, folderName)
 {
   const client = await auth.getClient();
   const drive = google.drive({ version: 'v3', auth: client });
 
   try {
-    const folderName = nameFolder; // Имя папки, которую хотите загрузить
     const parentFolderId = '1IqFM9xTfP1LyLs77S7mH_4_Ln3wmYwXV'; // ID родительской папки, в которую хотите загрузить папку
 
-    const folderId = await createFolder(folderName, parentFolderId, drive);
+    const folderId = await createFolder(`${folderName} ${Math.floor(Math.random() * (99999 - 1 + 1)) + 1}`, parentFolderId, drive);
 
-    const uploadedFiles = await uploadFolder(nameFolder, folderId, drive);
+    const uploadedFiles = await uploadFolder(folderPath, folderId, drive);
 
-    const viewLinks = await getPublicViewLinks(uploadedFiles, drive, nameFolder);
+    const viewLinks = await getPublicViewLinks(uploadedFiles, drive, folderName, folderPath);
 
-    console.log('Ссылки для просмотра загруженных изображений:', viewLinks);
+
   } catch (err) {
     console.error('Произошла ошибка:', err);
   }
@@ -84,7 +83,7 @@ const uploadFile = async (filePath, folderId, drive) => {
   return response.data.id;
 };
 
-const getPublicViewLinks = async (fileIds, drive, folderName) => {
+const getPublicViewLinks = async (fileIds, drive, folderName, folderPath) => {
   const viewLinks = [];
 
   for (const fileId of fileIds) {
@@ -104,13 +103,25 @@ const getPublicViewLinks = async (fileIds, drive, folderName) => {
     });
 
     const viewLink = response.data.webViewLink;
+    viewLinks.push(viewLink);
     GoogleSheets([
+      [viewLink, folderName],
+      [viewLink, folderName],
+      [viewLink, folderName],
       [viewLink, folderName]
     ])
-    console.log(viewLink)
+    
+    if (viewLinks.length == 4) {
+      console.log(viewLinks);
+      fs.remove(folderPath)
+      .then(() => {
+        console.log('Папка успешно удалена.');
+      })
+      .catch((err) => {
+        console.error('Ошибка при удалении папки:', err);
+      });
+      }
   }
-
-  return viewLinks;
 };
 
 

@@ -3,8 +3,11 @@ var axios = require('axios');
 require('dotenv').config();
 const { Telegraf } = require('telegraf');
 const { message } = require('telegraf/filters');
-const { GoogleTranslater } = require('./controllers/GoogleTranslater');
-const { GetImages } = require('./controllers/GetImages');
+// const { GoogleTranslater } = require('./controllers/GoogleTranslater');
+const { Imagine } = require('./controllers/Imagine');
+const { Upscale } = require('./controllers/Upscale');
+const { DownloadImage } = require('./controllers/DownloadImage');
+const { CleanupText } = require('./controllers/CleanupText')
 const app = express();
 
 app.use(express.json());
@@ -15,21 +18,61 @@ let requests = [];
 async function splitText(text) {
     text = text.split('\n');
     for (let item of text) {
-        item = await GoogleTranslater(item);
+        // item = await GoogleTranslater(item);
         requests.push(item);
     }
 }
 
+bot.command('getstatistic', (ctx) => {
+  // Установка флага, чтобы не фиксировать следующее сообщение
+  ctx.state.ignoreNextMessage = true;
+
+  // Здесь поместите логику для получения статистики
+  const statistic = `
+  количество сообщений в обработке: ${requests.length}
+  `; // Пример ответа со статистикой
+  ctx.reply(statistic);
+});
+
 bot.on(message('text'), async (ctx) => {
+    if (ctx.state.ignoreNextMessage) {
+      // Сообщение должно быть проигнорировано
+      ctx.state.ignoreNextMessage = false; // Сброс флага
+      return;
+    }
+
     await splitText(ctx.message.text);
 });
 
 let timer = setInterval(() => {
   if (requests.length !== 0) {
-    GetImages(requests[0])
+    Imagine(requests[0])
+    console.log(requests[0])
     requests.splice(0, 1);
   }  
-}, 8000);
+}, 120000);
+
+function imagineIteration(buttonMessageId, iterations) {
+  if (iterations <= 4) {
+    Upscale(buttonMessageId, `U${iterations}`);
+  } else {
+    console.log("Завершено");
+    return;
+  }
+
+  setTimeout(() => {
+    imagineIteration(buttonMessageId, iterations + 1);
+  }, 3000);
+}
+
+app.post('/imagine', (req, res) => {
+  imagineIteration(req.body.buttonMessageId, 1);
+});
+
+app.post('/upscale', (req, res) => {
+  let name = CleanupText(req.body.content);
+  DownloadImage(req.body.imageUrl, `${name}`, name);
+})
 
 app.listen(8080, () => {
   console.log('Сервер запущен на порту 8080');

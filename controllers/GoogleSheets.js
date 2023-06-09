@@ -25,7 +25,7 @@ async function GoogleSheets(links)
         resource,
       });
   
-      console.log('Данные успешно записаны в таблицу:', response.data);
+      
     } catch (err) {
       console.error('Произошла ошибка:', err);
     }
