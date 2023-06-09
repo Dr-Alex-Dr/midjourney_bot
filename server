@@ -94,7 +94,7 @@ bot.telegram.setWebhook('https://midjourneybot.site/');
 // Bind to Express app
 app.use(bot.webhookCallback('/'));
 
-app.listen(3000, () => {
+app.listen(3000, '127.0.0.1', () => {
   console.log('Сервер запущен на порту 3000');
 });
 bot.launch();
