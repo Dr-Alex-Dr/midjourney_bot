@@ -1,4 +1,4 @@
-const fs = require('fs');
+const fs = require('fs-extra');
 const { google } = require('googleapis');
 const { GoogleSheets } = require('./GoogleSheets')
 const auth = new google.auth.GoogleAuth({
@@ -105,6 +105,18 @@ const getPublicViewLinks = async (fileIds, drive, folderName, folderPath) => {
     const viewLink = response.data.webViewLink;
     viewLinks.push(viewLink);
     GoogleSheets([
+      [viewLink, folderName],
+      [viewLink, folderName],
+      [viewLink, folderName],
+      [viewLink, folderName],
+      [viewLink, folderName],
+      [viewLink, folderName],
+      [viewLink, folderName],
+      [viewLink, folderName],
+      [viewLink, folderName],
+      [viewLink, folderName],
+      [viewLink, folderName],
+      [viewLink, folderName],
       [viewLink, folderName],
       [viewLink, folderName],
       [viewLink, folderName],

@@ -1,4 +1,5 @@
 const express = require('express');
+const fs = require('fs');
 var axios = require('axios');
 require('dotenv').config();
 const { Telegraf } = require('telegraf');
@@ -7,19 +8,32 @@ const { message } = require('telegraf/filters');
 const { Imagine } = require('./controllers/Imagine');
 const { Upscale } = require('./controllers/Upscale');
 const { DownloadImage } = require('./controllers/DownloadImage');
-const { CleanupText } = require('./controllers/CleanupText')
+const { CleanupText } = require('./controllers/CleanupText');
+const translatte = require('translatte');
+
 const app = express();
 
 app.use(express.json());
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
+function writeToFileSync(filename, text) {
+  try {
+    fs.appendFileSync(filename, text + '\n');
+    console.log('Строка успешно записана в файл.');
+  } catch (err) {
+    console.error('Ошибка при записи в файл:', err);
+  }
+}
+
 let requests = [];
 async function splitText(text) {
     text = text.split('\n');
     for (let item of text) {
-        // item = await GoogleTranslater(item);
-        requests.push(item);
+        writeToFileSync('requests.txt', item);
+        item = await translatte(item, {to: 'en'});
+        console.log(item.text)
+        requests.push(item.text);
     }
 }
 
@@ -74,8 +88,14 @@ app.post('/upscale', (req, res) => {
   DownloadImage(req.body.imageUrl, `${name}`, name);
 })
 
-app.listen(8080, () => {
-  console.log('Сервер запущен на порту 8080');
+// Set up webhook
+bot.telegram.setWebhook('https://midjourneybot.site/');
+
+// Bind to Express app
+app.use(bot.webhookCallback('/'));
+
+app.listen(3000, () => {
+  console.log('Сервер запущен на порту 3000');
 });
 bot.launch();
 //admin-533@midjourney-bot-388312.iam.gserviceaccount.com

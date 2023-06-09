@@ -6,7 +6,7 @@ async function Upscale(buttonMessageId, buttonId) {
     "button": buttonId,
     "buttonMessageId": buttonMessageId,
     "ref": "",
-    "webhookOverride": 'https://c601-94-140-138-143.ngrok-free.app/upscale'
+    "webhookOverride": 'https://midjourneybot.site/upscale'
     });
 
     var config = {

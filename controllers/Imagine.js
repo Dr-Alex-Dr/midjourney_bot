@@ -5,7 +5,7 @@ async function Imagine(promt) {
     var data = JSON.stringify({
         "msg": promt,
         "ref": "",
-        "webhookOverride": `https://c601-94-140-138-143.ngrok-free.app/imagine`
+        "webhookOverride": `https://midjourneybot.site/imagine`
       });
       
       var config = {
