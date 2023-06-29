@@ -1,11 +1,11 @@
 let axios = require('axios');
 require('dotenv').config();
 
-async function Imagine(promt) {
+async function Imagine(promt, originalPromt) {
     var data = JSON.stringify({
         "msg": promt,
-        "ref": "",
-        "webhookOverride": `https://midjourneybot.site/imagine`
+        "ref": originalPromt,
+        "webhookOverride": 'https://auspersonalproduct.site/imagine'
       });
       
       var config = {

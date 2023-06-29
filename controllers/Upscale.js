@@ -1,12 +1,12 @@
 let axios = require('axios');
 require('dotenv').config();
 
-async function Upscale(buttonMessageId, buttonId) {
+async function Upscale(buttonMessageId, buttonId, originalPromt) {
     var data = JSON.stringify({
     "button": buttonId,
     "buttonMessageId": buttonMessageId,
-    "ref": "",
-    "webhookOverride": 'https://midjourneybot.site/upscale'
+    "ref": originalPromt,
+    "webhookOverride": 'https://auspersonalproduct.site/upscale'
     });
 
     var config = {

@@ -1,21 +1,24 @@
+require('events').EventEmitter.prototype._maxListeners = 100;
 const express = require('express');
 const fs = require('fs');
-var axios = require('axios');
 require('dotenv').config();
 const { Telegraf } = require('telegraf');
+
 const { message } = require('telegraf/filters');
-// const { GoogleTranslater } = require('./controllers/GoogleTranslater');
 const { Imagine } = require('./controllers/Imagine');
 const { Upscale } = require('./controllers/Upscale');
-const { DownloadImage } = require('./controllers/DownloadImage');
+//const { DownloadImage } = require('./controllers/DownloadImage')
+const { ImproveQuality } = require('./controllers/ImproveQuality');
+
 const { CleanupText } = require('./controllers/CleanupText');
-const translatte = require('translatte');
+const { TranslateText } = require('./controllers/TranslateText');
 
 const app = express();
 
 app.use(express.json());
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
+
 
 function writeToFileSync(filename, text) {
   try {
@@ -26,14 +29,14 @@ function writeToFileSync(filename, text) {
   }
 }
 
+let stateIndex = 0;
 let requests = [];
+
 async function splitText(text) {
     text = text.split('\n');
     for (let item of text) {
         writeToFileSync('requests.txt', item);
-        item = await translatte(item, {to: 'en'});
-        console.log(item.text)
-        requests.push(item.text);
+        requests.push(item);
     }
 }
 
@@ -58,43 +61,55 @@ bot.on(message('text'), async (ctx) => {
     await splitText(ctx.message.text);
 });
 
-let timer = setInterval(() => {
-  if (requests.length !== 0) {
-    Imagine(requests[0])
-    console.log(requests[0])
-    requests.splice(0, 1);
-  }  
-}, 120000);
+setInterval(() => {
+  if (requests.length !== 0 && Boolean(process.env.ACTION_BEING)) {
+    process.env.ACTION_BEING = '';
 
-function imagineIteration(buttonMessageId, iterations) {
+    let firstItem = requests.shift();
+    TranslateText(firstItem)
+    .then(res => {
+        Imagine(res, CleanupText(firstItem))
+        console.log(CleanupText(firstItem) + "    " + res)
+    })
+  }  
+
+}, 20000);
+
+
+function imagineIteration(buttonMessageId, iterations, originalPromt) {
   if (iterations <= 4) {
-    Upscale(buttonMessageId, `U${iterations}`);
+    Upscale(buttonMessageId, `U${iterations}`, originalPromt);
   } else {
     console.log("Завершено");
     return;
   }
 
   setTimeout(() => {
-    imagineIteration(buttonMessageId, iterations + 1);
+    imagineIteration(buttonMessageId, iterations + 1, originalPromt);
   }, 3000);
 }
 
 app.post('/imagine', (req, res) => {
-  imagineIteration(req.body.buttonMessageId, 1);
+  imagineIteration(req.body.buttonMessageId, 1, req.body.ref);
+  stateIndex = 0;
 });
 
-app.post('/upscale', (req, res) => {
+app.post('/upscale', async (req, res) => {
   let name = CleanupText(req.body.content);
-  DownloadImage(req.body.imageUrl, `${name}`, name);
+  ImproveQuality(req.body.imageUrl, name, req.body.ref, stateIndex)
+  //await DownloadImage(req.body.imageUrl, name, req.body.ref, stateIndex);
+  stateIndex += 1;
 })
 
+
 // Set up webhook
-bot.telegram.setWebhook('https://midjourneybot.site/');
+//https://auspersonalproduct.site/
+bot.telegram.setWebhook('https://auspersonalproduct.site');
 
 // Bind to Express app
 app.use(bot.webhookCallback('/'));
 
-app.listen(3000, '127.0.0.1', () => {
+app.listen(3000, 'localhost', () => {
   console.log('Сервер запущен на порту 3000');
 });
 bot.launch();

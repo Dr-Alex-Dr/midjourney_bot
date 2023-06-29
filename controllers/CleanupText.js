@@ -1,9 +1,14 @@
 function CleanupText(text) {
-// Удаление символов +=[]:*?;«,./\<>|
+
+  text = text.replace(/—/g, "--");
+  // Удаление символов +=[]:*?;«,./\<>|
   const cleanedText = text.replace(/[+=\[\]:*?;«,\.\/\\<>\|]/g, '');
 
+  // Удаление цифр из начала строки
+  const textWithoutDigits = cleanedText.replace(/^\d+/, '');
+
   // Удаление текста после символа --
-  const textBeforeDash = cleanedText.split('--')[0];
+  const textBeforeDash = textWithoutDigits.split('--')[0];
 
   // Удаление лишних пробелов
   const trimmedText = textBeforeDash.trim().replace(/\s+/g, ' ');

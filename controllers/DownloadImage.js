@@ -1,37 +1,44 @@
 const axios = require('axios');
+require('dotenv').config();
 const fs = require('fs');
-const { GoogleDirve } = require('./GoogleDirve');
+const { GoogleSheets } = require('./GoogleSheets');
 
-async function DownloadImage(imageUrl, folderName, nameImg) {
+async function DownloadImage(imageUrl, nameImg, originalPromt, index) {
   try {
-    let folderPath = `foldersImages/${folderName}`;
     nameImg = `${nameImg} ${Math.floor(Math.random() * (99999 - 1 + 1)) + 1}`
-
-    if (!fs.existsSync(folderPath)) {
-      fs.mkdirSync(folderPath);
-      console.log(`Папка ${folderPath} успешно создана.`);
-    } 
     
     const response = await axios.get(imageUrl, { responseType: 'stream' });
-    const writer = fs.createWriteStream(`${folderPath}/${nameImg}.jpg`);
+    const writer = fs.createWriteStream(`foldersImages/${nameImg}.jpg`);
 
     response.data.pipe(writer);
 
-    // проверяем есть ли в папке 4 или более изображений
-    fs.readdir(folderPath, (err, files) => {
-      if (err) {
-        console.error('Ошибка при чтении папки:', err);
-        return;
-      }
-      if (files.length !== undefined) {
-        const fileCount = files.length;
-        console.log(`Папка содержит ${fileCount} файла.`);
-        if (fileCount == 3) {
-          GoogleDirve(folderPath, folderName);
-        }     
-      }
-    });
+    let encodedNameImg = encodeURIComponent(nameImg);
+    let viewLink = `https://auspersonalproduct.site/foldersImages/${encodedNameImg}.jpg`;
+    console.log(viewLink);
+    console.log('index ' + index);
+    if (index >= 3) {
+      process.env.ACTION_BEING = true;
+    }
 
+    GoogleSheets([
+      [viewLink, originalPromt],
+      [viewLink, originalPromt],
+      [viewLink, originalPromt],
+      [viewLink, originalPromt],
+      [viewLink, originalPromt],
+      [viewLink, originalPromt],
+      [viewLink, originalPromt],
+      [viewLink, originalPromt],
+      [viewLink, originalPromt],
+      [viewLink, originalPromt],
+      [viewLink, originalPromt],
+      [viewLink, originalPromt],
+      [viewLink, originalPromt],
+      [viewLink, originalPromt],
+      [viewLink, originalPromt],
+      [viewLink, originalPromt]
+    ])
+    
     return new Promise((resolve, reject) => {
       writer.on('finish', resolve);
       writer.on('error', reject);
@@ -41,5 +48,6 @@ async function DownloadImage(imageUrl, folderName, nameImg) {
   }
 };
 
-//DownloadImage('https://cdn.discordapp.com/attachments/1042502447282782238/1115544154433388665/Adam_Aushev_Saint_Petersburg_at_night_cyberpunk_6e05a5e7-046a-41ad-86c2-addeda647b09.png', 'Saint Petersburg at night cyberpunk', 'Saint Petersburg at night cyberpunk')
+//DownloadImage('https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Moench_2339.jpg/1200px-Moench_2339.jpg', 'Green gold', 'Зеленое золото', 1)
 module.exports = { DownloadImage }
+
