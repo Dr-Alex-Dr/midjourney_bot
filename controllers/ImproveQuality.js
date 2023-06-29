@@ -1,6 +1,7 @@
 const axios = require('axios');
 const FormData = require('form-data');
 const { DownloadImage } = require('./DownloadImage');
+require('dotenv').config();
 
 function ImproveQuality(imageUrl, nameImg, originalPromt, index) {
   const form = new FormData();
@@ -20,9 +21,11 @@ function ImproveQuality(imageUrl, nameImg, originalPromt, index) {
   .then((response) => {
     DownloadImage(response.data.output_url, nameImg, originalPromt, index)
     console.log(response.data);
+    process.env.BOT_TOKEN = 0;
   })
   .catch((error) => {
     console.log(error);
+    process.env.BOT_TOKEN = 1;
   });
 }
 
