@@ -23,6 +23,8 @@ async function ImproveQuality(imageUrl, imageSize) {
       resolve(response.data.output_url);
     })
     .catch((error) => {
+      console.log('Ошибка обработки изображения: ', error);
+
       reject(error);
     });
   })
