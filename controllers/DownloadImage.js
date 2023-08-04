@@ -3,9 +3,9 @@ require('dotenv').config();
 const fs = require('fs');
 const { GoogleSheets } = require('./GoogleSheets');
 
-async function DownloadImage(imageUrl, nameImg, originalPromt, index) {
+async function DownloadImage(imageUrl, originalPromt) {
   try {
-    nameImg = `${nameImg} ${Math.floor(Math.random() * (99999 - 1 + 1)) + 1}`
+    nameImg = `${Math.floor(Math.random() * (99999 - 1 + 1)) + 1}`
     
     const response = await axios.get(imageUrl, { responseType: 'stream' });
     const writer = fs.createWriteStream(`foldersImages/${nameImg}.jpg`);
@@ -15,10 +15,6 @@ async function DownloadImage(imageUrl, nameImg, originalPromt, index) {
     let encodedNameImg = encodeURIComponent(nameImg);
     let viewLink = `https://auspersonalproduct.site/foldersImages/${encodedNameImg}.jpg`;
     console.log(viewLink);
-    console.log('index ' + index);
-    if (index >= 3) {
-      process.env.ACTION_BEING = true;
-    }
 
     GoogleSheets([
       [viewLink, originalPromt],

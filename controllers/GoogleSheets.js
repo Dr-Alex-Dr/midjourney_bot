@@ -10,7 +10,7 @@ async function GoogleSheets(links)
   const sheets = google.sheets({ version: 'v4', auth: client });
 //1bEuPb_Ul6E8QBKOFId8FuOVsndtVozTThaJBn76PrwM
   try {
-    const spreadsheetId = '1bEuPb_Ul6E8QBKOFId8FuOVsndtVozTThaJBn76PrwM'; // Замените на идентификатор своей таблицы
+    const spreadsheetId = '1XT_wGrWpjs2HrkgZ1j8J1Yiauk8Le4DQhRKagpM_HZM'; // Замените на идентификатор своей таблицы
     const range = 'A1:B20'; // Замените на нужный диапазон ячеек
     const values = links;
   
